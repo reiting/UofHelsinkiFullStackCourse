@@ -2,18 +2,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 const App = () => {
-  // const part1 = {
-  //   name: 'Fundamentals of React',
-  //   exercises: 10
-  // }
-  // const part2 = {
-  //   name: 'Using props to pass data',
-  //   exercises: 7
-  // }
-  // const part3 = {
-  //   name: 'State of a component',
-  //   exercises: 14
-  // }
 
   const course = 'Half Stack application development'
   const parts = [
@@ -35,16 +23,8 @@ const App = () => {
   return (
     <div>
       <Header course={course} />
-      <Content 
-        part1={parts[0].name} exercises1={parts[0].exercises} 
-        part2={parts[1].name} exercises2={parts[1].exercises}
-        part3={parts[2].name} exercises3={parts[2].exercises}
-      />
-      <Total 
-        exercises1={parts[0].exercises}
-        exercises2={parts[1].exercises}
-        exercises3={parts[2].exercises}
-      />
+      <Content parts={parts} />
+      <Total parts={parts} />
     </div>
   )
 }
@@ -60,39 +40,34 @@ const Header = (props) => {
 }
 
 const Content = (props) => {
+  const parts = props.parts.map(part =>
+    <Part key={part.name} name={part.name} exercises={part.exercises}></Part>
+  )
   return (
-   <div>
-     <Part part1={props.part1} exercises1={props.exercises1} />
-     <Part part2={props.part2} exercises2={props.exercises2} />
-     <Part part3={props.part3} exercises3={props.exercises3} />
-   </div>
+    <div>
+      {parts}
+    </div>
   )
 }
 
 const Part = (props) => {
   return (
-     <>
       <p>
-        {props.part1} {props.exercises1}
+       {props.name + ' '}
+       {props.exercises}
       </p>
-      <p>
-        {props.part2} {props.exercises2}
-      </p>
-      <p>
-        {props.part3} {props.exercises3}
-      </p>
-    </>
   )
 }
 
 const Total = (props) => {
+  const add = (a, b) => 
+    a + b;
+
   return (
     <p>
-      Number of exercises {props.exercises1 + props.exercises2 + props.exercises3}
+      Number of exercises: {props.parts.map(part => part.exercises).reduce(add)}
     </p>
   )
 }
-
-
 
 ReactDOM.render(<App />, document.getElementById('root'))
