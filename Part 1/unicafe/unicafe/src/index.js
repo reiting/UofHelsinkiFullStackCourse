@@ -8,7 +8,12 @@ const Button = ({ onClick, text }) => (
 )
 
 const Statistics = (props) => {
- 
+  console.log(props.all.length);
+ if (props.all === 0) {
+   return (
+     <p>No feedback given</p>
+   )
+ }
   return (
     <div>
       <h2>Statistics</h2>
