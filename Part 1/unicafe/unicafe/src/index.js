@@ -8,7 +8,6 @@ const Button = ({ onClick, text }) => (
 )
 
 const Statistics = (props) => {
-  console.log(props.all.length);
  if (props.all === 0) {
    return (
      <p>No feedback given</p>
@@ -16,16 +15,22 @@ const Statistics = (props) => {
  }
   return (
     <div>
-      <h2>Statistics</h2>
-      <ul>
-        <li>good: {props.good}</li>
-        <li>neutral: {props.neutral}</li>
-        <li>bad: {props.bad}</li>
-        <li>all: {props.all}</li>
-        <li>average: {(props.good * 1 + props.neutral * 0 + props.bad * -1) / props.all}</li>
-        <li>positive: {`${(props.good / props.all) * 100}%`}</li>
-      </ul>
+      <Statistic text="good: " value={props.good} />
+      <Statistic text="neutral: " value={props.neutral} />
+      <Statistic text="bad: " value={props.bad} />
+      <Statistic text="all: " value={props.all} />
+      <Statistic text="average: " value={(props.good * 1 + props.neutral * 0 + props.bad * -1) / props.all} />
+      <Statistic text="average: " value={`${(props.good / props.all) * 100}%`} />
     </div>
+  )
+}
+
+const Statistic = ({text, value}) => {
+  return (
+    <p>
+      {text}
+      {value}
+    </p>
   )
 }
 
@@ -60,6 +65,7 @@ const App = () => {
         <Button onClick={handleBad} text='bad'></Button>
       </div>
       <div>
+      <h2>Statistics</h2>
       <Statistics all={all} good={good} neutral={neutral} bad={bad}/>
       </div>
     </div>
