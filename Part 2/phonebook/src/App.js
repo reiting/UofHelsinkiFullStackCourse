@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import axios from 'axios'
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Filter from './components/Filter';
@@ -11,6 +12,14 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
+  
   useEffect(() => {
     const results = persons.filter(person =>
       person.name.toLowerCase().includes(searchTerm)
@@ -49,7 +58,7 @@ const App = () => {
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
       <h3>add a new</h3>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} 
-                  newNumber={newNumber} handleNumberChange={handleNumberChange} />
+          newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
       <Persons searchResults={searchResults}/>
     </div>
