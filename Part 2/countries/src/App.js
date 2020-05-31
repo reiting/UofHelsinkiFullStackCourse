@@ -17,8 +17,8 @@ const App = () => {
       })
   }, [])
 
+  //gets the list of all the countries and filters through them based on the searchTerm
   const listOfCountries = countries.filter(country => country.name.toLowerCase().includes(searchTerm.toLowerCase()))
-
 
   const handleSearchChange = event => {
     setSearchTerm(event.target.value);
@@ -27,9 +27,12 @@ const App = () => {
   return (
     <form>
       <Search searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
-      <Countries countries={listOfCountries} />
+      <Countries countries={listOfCountries} setSearchTerm={setSearchTerm} />
     </form>
   )
 }
 
 export default App;
+
+
+
