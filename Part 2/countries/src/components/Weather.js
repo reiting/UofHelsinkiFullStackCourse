@@ -12,7 +12,6 @@ const Weather = ({ capital }) => {
         axios
             .get('http://api.weatherstack.com/current', {params})
             .then(response => {
-                console.log(response.data);
                 setCurrentWeather(response.data.current);
             });
     }, [capital]);
