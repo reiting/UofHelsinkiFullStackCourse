@@ -12,6 +12,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const [searchResults, setSearchResults] = useState([])
 
+  //gets info from server
   useEffect(() => {
     axios
       .get('http://localhost:3001/persons')
@@ -19,7 +20,9 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
-  
+
+  //goes through names and lowercases them all to avoid confusion. Then sets the results variable 
+  //to the person on the list who matches the search term entered
   useEffect(() => {
     const results = persons.filter(person =>
       person.name.toLowerCase().includes(searchTerm)
@@ -39,6 +42,7 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
+  //creates new person object and if that person is not in the phonebook, adds them. If they are, alerts user.
   const addPerson = (event) => {
     event.preventDefault()
     const personObject = {
@@ -48,7 +52,11 @@ const App = () => {
     if (persons.some(cred => cred.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPersons(persons.concat(personObject));
+      axios
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(personObject));
+      })
     }
   }
 
