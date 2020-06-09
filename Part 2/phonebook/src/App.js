@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
-import axios from 'axios'
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import Filter from './components/Filter';
+import personService from './services/persons';
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -14,10 +14,10 @@ const App = () => {
 
   //gets info from server
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
       })
   }, [])
 
@@ -52,11 +52,11 @@ const App = () => {
     if (persons.some(cred => cred.name === newName)) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      axios
-      .post('http://localhost:3001/persons', personObject)
-      .then(response => {
-        setPersons(persons.concat(personObject));
-      })
+        personService
+          .create(personObject)
+            .then(returnedPerson => {
+              setPersons(persons.concat(returnedPerson))
+            })
     }
   }
 
@@ -65,10 +65,10 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
       <h3>add a new</h3>
-      <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange} 
-          newNumber={newNumber} handleNumberChange={handleNumberChange} />
+      <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
+        newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons searchResults={searchResults}/>
+      <Persons searchResults={searchResults} />
     </div>
   )
 }
