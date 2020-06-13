@@ -30,17 +30,26 @@ const App = () => {
     setSearchResults(results);
   }, [searchTerm, persons]);
 
-  const handleNameChange = (event) => {
+  const handleNameChange = event => {
     setNewName(event.target.value)
   }
 
-  const handleNumberChange = (event) => {
+  const handleNumberChange = event => {
     setNewNumber(event.target.value)
   }
 
   const handleSearchChange = event => {
     setSearchTerm(event.target.value);
   };
+
+    const deletePerson = (id, name) => {
+      if (window.confirm(`Delete ${name}?`)) {
+        personService.remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id));
+        });
+      } 
+    };
 
   //creates new person object and if that person is not in the phonebook, adds them. If they are, alerts user.
   const addPerson = (event) => {
@@ -68,7 +77,7 @@ const App = () => {
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons searchResults={searchResults} />
+      <Persons searchResults={searchResults} deletePerson={deletePerson}/>
     </div>
   )
 }
