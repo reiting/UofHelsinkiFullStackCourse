@@ -42,42 +42,72 @@ const App = () => {
     setSearchTerm(event.target.value);
   };
 
-    const deletePerson = (id, name) => {
-      if (window.confirm(`Delete ${name}?`)) {
-        personService.remove(id)
-        .then(() => {
-          setPersons(persons.filter(person => person.id !== id));
-        });
-      } 
-    };
-
   //creates new person object and if that person is not in the phonebook, adds them. If they are, alerts user.
-  const addPerson = (event) => {
+  const addPerson = (event, id) => {
     event.preventDefault()
-    const personObject = {
-      name: newName,
-      number: newNumber
-    }
-    if (persons.some(cred => cred.name === newName)) {
-      alert(`${newName} is already added to phonebook`);
+
+    if (persons.some(person => person.name.toUpperCase() === newName.toUpperCase())) {
+      const update = window.confirm(`${newName} is already added to the phonebook. Replace the old number with a new one?`);
+      if (!update) {
+        return;
+      }
+
+      const person = persons.find(p => p.name.toUpperCase() === newName.toUpperCase())
+      const changedPerson = { ...person, number: newNumber }
+
+      personService
+        .update(changedPerson.id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
+        })
+        .catch(() => {
+          alert(
+            `the person '${changedPerson.name}' was already deleted from server`
+          )
+          setPersons(persons.filter(p => p.id !== id))
+        })
     } else {
+      const personObject = {
+        name: newName,
+        number: newNumber
+      }
+      if (persons.some(cred => cred.name === newName)) {
+        alert(`${newName} is already added to phonebook`);
+      } else {
         personService
           .create(personObject)
-            .then(returnedPerson => {
-              setPersons(persons.concat(returnedPerson))
-            })
+          .then(returnedPerson => {
+            setPersons(persons.concat(returnedPerson))
+          })
+      }
     }
   }
+
+  const deletePerson = (id, name) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter(person => person.id !== id));
+        })
+        .catch(() => {
+          alert(
+            `the person '${name}' was already deleted from server`
+          )
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
+  };
 
   return (
     <div>
       <h2>Phonebook</h2>
       <Filter searchTerm={searchTerm} handleSearchChange={handleSearchChange} />
-      <h3>add a new</h3>
+      <h3>Add New Contact</h3>
       <PersonForm addPerson={addPerson} newName={newName} handleNameChange={handleNameChange}
         newNumber={newNumber} handleNumberChange={handleNumberChange} />
       <h3>Numbers</h3>
-      <Persons searchResults={searchResults} deletePerson={deletePerson}/>
+      <Persons searchResults={searchResults} deletePerson={deletePerson} />
     </div>
   )
 }
