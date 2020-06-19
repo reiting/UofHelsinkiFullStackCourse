@@ -49,29 +49,42 @@ app.get('/info', (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
     const id = Number(request.params.id)
     person = persons.filter(person => person.id !== id)
-  
-    response.status(204).end()
-  })
 
-  app.post('/api/persons', (request, response) => {
+    response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
     const body = request.body
 
-    if (!body.content) {
-        return response.status(400).json({ 
-          error: 'content missing' 
+    if (!body.name) {
+        return response.status(400).json({
+            error: 'Name is missing'
         })
-      }
+    }
+    if (!body.number) {
+        return response.status(400).json({
+            error: 'Number is missing'
+        })
+    }
 
-      const person = {
+    const person = {
         name: body.name,
         number: body.number,
-        id: generateId(),
-      }
+        // id: generateId(),
+    }
 
-      persons = persons.concat(persons)
+    newPerson = persons.filter(person => person.name === person)
 
-      response.json(person)
-  })
+    if (newPerson) {
+        return response.status(400).json({
+            error:'Name must be unique'
+        })
+    }
+
+    persons = persons.concat(persons)
+
+    response.json(person)
+})
 
 const PORT = 3001
 app.listen(PORT, () => {
