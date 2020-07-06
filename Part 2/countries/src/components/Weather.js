@@ -13,13 +13,14 @@ const Weather = ({ capital }) => {
             .get('http://api.weatherstack.com/current', {params})
             .then(response => {
                 setCurrentWeather(response.data.current);
+                console.log(response.data.current);
             });
     }, [capital]);
 
     return (
         <div>
             <p> Temperature: {currentWeather.temperature} Celsius</p>
-            <img src={currentWeather.weather_icons} width='50px' />
+            <img src={currentWeather.weather_icons} width='50px' alt='current weather icon'/>
             <p>Wind: {currentWeather.wind_speed} mph direction {currentWeather.wind_dir}</p>
         </div>
     )
