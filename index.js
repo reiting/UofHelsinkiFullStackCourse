@@ -20,6 +20,8 @@ morgan.token('person', (req) => {
     ),
   )
 
+  app.use(express.static('build'))
+
 let persons = [
     {
         "name": "Ada Lovelace",
