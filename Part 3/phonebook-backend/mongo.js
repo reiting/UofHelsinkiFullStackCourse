@@ -10,7 +10,7 @@ contact = process.argv[3];
 number = process.argv[4];
 
 const url =
-    `mongodb+srv://reiting:${password}@cluster0.f5c80.mongodb.net/phonebook-app?retryWrites=true&w=majority`
+`mongodb+srv://reiting:${password}@cluster0.f5c80.mongodb.net/phonebook-app?retryWrites=true&w=majority`
 
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true })
 
