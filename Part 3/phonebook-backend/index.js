@@ -1,13 +1,11 @@
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
 const cors = require('cors')
 const Contact = require('./models/contact')
-const mongoose = require('mongoose')
 
 app.use(express.static('build'))
 app.use(bodyParser.json())
@@ -45,9 +43,9 @@ app.get('/api/persons', (request, response) => {
   })
 })
 
-app.get('/info', (request, response) => {
-  var d = Date(Date.now());
-  d = d.toString();
+app.get('/info', (request, response, next) => {
+  var d = Date(Date.now())
+  d = d.toString()
   Contact.find({}).then(result => {
     response.send(
       `<p>Phonebook has info for ${result.length} people</p>
@@ -58,7 +56,7 @@ app.get('/info', (request, response) => {
     .catch(error => next(error))
 })
 
-app.get('/api/persons/:id', (request, response) => {
+app.get('/api/persons/:id', (request, response, next) => {
   Contact.findById(request.params.id)
     .then(contact => {
       if (contact) {
@@ -113,11 +111,13 @@ app.put('/api/persons/:id', (request, response, next) => {
 app.delete('/api/persons/:id', (request, response, next) => {
   Contact.findByIdAndRemove(request.params.id)
     .then(result => {
+      console.log(result)
       response.status(204).end()
     })
     .catch(error => next(error))
 })
 
+// eslint-disable-next-line no-undef
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
