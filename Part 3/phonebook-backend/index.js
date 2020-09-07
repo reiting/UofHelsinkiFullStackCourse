@@ -1,5 +1,6 @@
-require('dotenv').config()
-
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
@@ -8,6 +9,7 @@ const cors = require('cors')
 const Contact = require('./models/contact')
 const mongoose = require('mongoose')
 
+app.use(express.static('build'))
 app.use(bodyParser.json())
 
 // Configure morgan to log body of POST request
@@ -21,11 +23,8 @@ app.use(
   ),
 )
 app.use(cors())
-app.use(express.static('build'))
 // json-parser
 // app.use(express.json())
-
-
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
