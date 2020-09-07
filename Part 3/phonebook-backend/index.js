@@ -14,6 +14,7 @@ morgan.token('person', (req) => {
     return null
 })
 
+app.use(express.static('build'))
 // json-parser
 app.use(express.json())
 
