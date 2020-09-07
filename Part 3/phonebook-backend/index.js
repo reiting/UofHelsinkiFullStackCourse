@@ -15,6 +15,7 @@ morgan.token('person', (req) => {
 })
 
 app.use(express.static('build'))
+
 // json-parser
 app.use(express.json())
 
@@ -41,7 +42,7 @@ app.use(
 
 app.get('/api/persons', (request, response) => {
     Contact.find({}).then(contacts => {
-        response.json(contacts)
+      response.json(contacts.map(contact => contact.toJSON()))
     })
 })
 
@@ -49,7 +50,7 @@ app.get('/api/persons/:id', (request, response) => {
     Contact.findById(request.params.id)
       .then(contact => {
         if (contact) {
-          response.json(contact)
+          response.json(contact.toJSON())
         } else {
           response.status(404).end()
         }
@@ -77,7 +78,7 @@ app.get('/api/persons/:id', (request, response) => {
     })
   
     person.save().then(savedPerson => {
-      response.json(savedPerson)
+      response.json(savedPerson.toJSON())
     })
     .catch(error => next(error))
   })
@@ -92,7 +93,7 @@ app.get('/api/persons/:id', (request, response) => {
   
     Contact.findByIdAndUpdate(request.params.id, person, { new: true })
       .then(updatedPerson => {
-        response.json(updatedPerson)
+        response.json(updatedPerson.toJSON())
       })
       .catch(error => next(error))
   })
