@@ -39,6 +39,11 @@ app.use(
   
   app.use(errorHandler)
 
+  app.get('/api', (request, response) => {
+    Contact.find({}).then(contacts => {
+      response.json(contacts.map(contact => contact.toJSON()))
+    })
+})
 
 app.get('/api/persons', (request, response) => {
     Contact.find({}).then(contacts => {
