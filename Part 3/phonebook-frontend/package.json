@@ -10,7 +10,9 @@
     "cors": "^2.8.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-scripts": "3.4.1",
+    "express":"*",
+    "body-parser":"*"
   },
   "scripts": {
     "start": "react-scripts start",
