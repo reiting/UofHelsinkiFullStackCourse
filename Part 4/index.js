@@ -1,9 +1,12 @@
-const http = require('http')
 const express = require('express')
-const app = express()
+const bodyParser = require('body-parser')
 const cors = require('cors')
-const mongoose = require('mongoose')
+const Blog = require('./models/blog')
 
+const app = express()
+
+// app.use(express.static('build'))
+app.use(bodyParser.json())
 app.use(cors())
 app.use(express.json())
 
