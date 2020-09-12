@@ -1,7 +1,7 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const Blog = require('./models/blog')
+const Blog = require('../models/blog')
 const blogRouter = require('express').Router()
 
 const app = express()
