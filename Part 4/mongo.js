@@ -25,7 +25,6 @@ const blogSchema = new mongoose.Schema({
 //     console.log(`added ${person.name} number ${person.number} to phonebook`)
 //     mongoose.connection.close()
 //   })
-// } else {
   Blog.find({}).then(result => {
     result.forEach(blog => {
         console.log(blog)
