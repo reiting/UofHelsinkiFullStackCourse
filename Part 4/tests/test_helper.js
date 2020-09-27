@@ -2,7 +2,7 @@ const Blog = require('../models/blog')
 
 const initialBlogs = [
     {
-      title: "Title 1",
+      name: "Title 1",
       author: "Author 1",
       url: "https://google.com",
       likes: 20

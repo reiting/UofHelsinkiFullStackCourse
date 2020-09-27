@@ -53,6 +53,25 @@ test('a valid blog can be added ', async () => {
   )
 })
 
+test('if likes property is missing, value will default to 0', async () => {
+  const newBlog = {
+    name: 'Cats Rule',
+    author: 'Tigress',
+    url: 'tigress.com',
+  };
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(200)
+  .expect('Content-Type', /application\/json/)
+
+const blogsAtEnd = await helper.blogsInDb()
+
+console.log(blogsAtEnd)
+expect(blogsAtEnd[helper.initialBlogs.length].likes).toBe(0)
+});
+
 afterAll(() => {
   mongoose.connection.close()
 })
