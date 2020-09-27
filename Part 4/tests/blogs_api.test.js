@@ -68,8 +68,23 @@ test('if likes property is missing, value will default to 0', async () => {
 
 const blogsAtEnd = await helper.blogsInDb()
 
-console.log(blogsAtEnd)
 expect(blogsAtEnd[helper.initialBlogs.length].likes).toBe(0)
+});
+
+test('if title and url properties are missing, receive a 400 status code', async () => {
+  const newBlog = {
+    author: 'Tigress',
+    likes: 5
+  };
+
+  await api
+  .post('/api/blogs')
+  .send(newBlog)
+  .expect(400)
+  .expect('Content-Type', /application\/json/)
+
+const blogsAtEnd = await helper.blogsInDb()
+expect(blogsAtEnd.length).toBe(helper.initialBlogs.length)
 });
 
 afterAll(() => {
