@@ -1,0 +1,5 @@
+MONGODB_URI='mongodb+srv://reiting:IZMwQJa7iebwtAla@cluster0.f5c80.mongodb.net/blog-app?retryWrites=true&w=majority'
+
+TEST_MONGODB_URI='mongodb+srv://reiting:IZMwQJa7iebwtAla@cluster0.f5c80.mongodb.net/blog-app-test?retryWrites=true&w=majority'
+PORT=3001
+SECRET=sekred
