@@ -17,6 +17,15 @@ const App = () => {
     )
   }, [])
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async event => {
     event.preventDefault()
     console.log('logging in with', username, password)
@@ -25,6 +34,10 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
+
+      window.localStorage.setItem(
+          'loggedBlogappUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -53,6 +66,11 @@ const App = () => {
       })
   }
 
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
+  }
+
   const handleBlogChange = (event) => {
     setNewBlog(event.target.value)
   }
@@ -77,7 +95,7 @@ const App = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">login</button>
+      <button type="submit">Log In</button>
     </form>
   )
 
@@ -87,13 +105,15 @@ const App = () => {
         value={newBlog}
         onChange={handleBlogChange}
       />
+      <p>{user?.username} is logged in</p>
       <button type="submit">save</button>
+      <button onClick={handleLogout}>Log Out</button>
     </form>
   )
 
   return (
     <div>
-      <h2>blogs</h2>
+      <h2>Blogs</h2>
       {user === null ?
         loginForm() :
         blogForm()
