@@ -3,17 +3,20 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NewBlog from './components/NewBlog'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
-  const [errorMessage, setErrorMessage] = useState(null)
+  const [errorMessage, setErrorMessage] = useState('null')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [newBlog, setNewBlog] = useState('')
+  const [notification, setNotification] = useState('')
+
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -65,6 +68,10 @@ const App = () => {
     blogService
       .create(blogObject)
       .then(returnedBlog => {
+        setNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
+        setTimeout(() => {
+          setNotification(null)
+        }, 5000)
         setBlogs(blogs.concat(returnedBlog))
         setNewBlog('')
       })
@@ -124,6 +131,10 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
+      {errorMessage ? (
+        <Notification message={errorMessage} hasError={true} />
+      ) : null}
+      {notification ? <Notification message={notification} /> : ''}
       {user === null ?
         loginForm() :
         <div>
