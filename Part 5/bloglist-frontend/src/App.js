@@ -100,6 +100,27 @@ const App = () => {
     }
   }
 
+  const handleDelete = async blog => {
+    //console.log("clicked liker");
+
+    if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
+      console.log(blog)
+      try {
+        const response = await blogService.remove(blog.id)
+        console.log(response)
+
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+      } catch (error) {
+        console.log(error)
+
+        setNotification(error.message)
+        setTimeout(() => {
+          setNotification(null)
+        }, 3000)
+      }
+    }
+  }
+
   const handleLogout = () => {
     window.localStorage.removeItem('loggedBlogappUser')
     setUser(null)
@@ -155,7 +176,6 @@ const App = () => {
     </Togglable>
   )
 
-
   blogs.sort((a, b) => b.likes - a.likes)
 
   return (
@@ -174,7 +194,7 @@ const App = () => {
         </div>
       }
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} addLike={addLike}
+        <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
 />
       )}
     </div>
