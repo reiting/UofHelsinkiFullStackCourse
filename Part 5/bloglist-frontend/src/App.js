@@ -4,6 +4,7 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -118,15 +119,20 @@ const App = () => {
     </form>
   )
 
-  // const blogForm = () => (
-  //   <form onSubmit={addBlog}>
-  //     <input
-  //       value={newBlog}
-  //       onChange={handleAuthorChange}
-  //     />
-  //   
-  //   </form>
-  // )
+  const blogForm = () => (
+    <Togglable buttonLabel='New Note'>
+      <NewBlog
+        addBlog={addBlog}
+        newTitle={newTitle}
+        handleTitleChange={handleTitleChange}
+        newAuthor={newAuthor}
+        handleAuthorChange={handleAuthorChange}
+        newUrl={newUrl}
+        handleUrlChange={handleUrlChange} 
+      />
+    </Togglable>
+  )
+
 
   return (
     <div>
@@ -138,9 +144,9 @@ const App = () => {
       {user === null ?
         loginForm() :
         <div>
-          <p>{user?.username} is logged in</p>
-          <button type="submit" onChange={handleLogout}>Log Out</button>
-          <NewBlog addBlog={addBlog} newTitle={newTitle} handleTitleChange={handleTitleChange} new={newAuthor} handleAuthorChange={handleAuthorChange} newUrl={newUrl} handleUrlChange={handleUrlChange} />
+            <p>{user?.username} is logged in</p>
+            <button type="submit" onChange={handleLogout}>Log Out</button>
+            {blogForm()}
         </div>
       }
       {blogs.map(blog =>
@@ -148,6 +154,7 @@ const App = () => {
       )}
     </div>
   )
+
 }
 
 export default App
