@@ -67,7 +67,7 @@ const App = () => {
     }
 
     blogService
-      .create(blogObject)
+      (blogObject)
       .then(returnedBlog => {
         setNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
         setTimeout(() => {
@@ -76,6 +76,28 @@ const App = () => {
         setBlogs(blogs.concat(returnedBlog))
         setNewBlog('')
       })
+  }
+
+  const addLike = async blog => {
+    const updatedBlog = {
+      user: blog.user.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    try {
+      const response = await blogService.update(blog.id, updatedBlog)
+      setBlogs(blogs.map(blog => (blog.id !== response.id ? blog : response)))
+    } catch (error) {
+      console.log(error)
+
+      setNotification(error.message)
+      setTimeout(() => {
+        setNotification(null)
+      }, 3000)
+    }
   }
 
   const handleLogout = () => {
@@ -150,7 +172,8 @@ const App = () => {
         </div>
       }
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike}
+/>
       )}
     </div>
   )
