@@ -181,10 +181,7 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      {errorMessage ? (
-        <Notification message={errorMessage} hasError={true} />
-      ) : null}
-      {notification ? <Notification message={notification} /> : ''}
+      <Notification message={errorMessage} hasError={true} />
       {user === null ?
         loginForm() :
         <div>
