@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom'
-import { render, fireEvent } from '@testing-library/react'
+import { render, fireEvent, screen } from '@testing-library/react'
 import Blog from './Blog'
 
 describe('<Blog />', () => {
@@ -46,4 +46,20 @@ describe('<Blog />', () => {
         expect(div).not.toHaveStyle('display: none')
     })
 
+    test('when clicking like button twice, it\'s called twice', () => {
+        const blog = {
+            title: 'My blog title',
+            author: 'Rachel',
+            likes: 4
+        }
+
+        const clickLike = jest.fn()
+        const component = render(<Blog blog={blog} addLike={clickLike}/>)        
+
+        const likeButton = component.getByText('Like')
+        fireEvent.click(likeButton)
+        fireEvent.click(likeButton)
+
+        expect(clickLike.mock.calls.length).toBe(2)
+    })
 })
