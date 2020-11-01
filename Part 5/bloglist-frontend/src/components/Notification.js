@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Notification = ({ message, hasError = false }) => {
-    const nameOfClass = hasError ? 'error-message' : 'success-message';
+    const nameOfClass = hasError ? 'error' : 'success-message';
 
     if (message === null) {
       return null

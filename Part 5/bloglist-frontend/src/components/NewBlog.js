@@ -17,7 +17,7 @@ const NewBlog = ({ addBlog, newTitle, handleTitleChange, newAuthor, handleAuthor
                 id='url'
                 value={newUrl}
                 onChange={handleUrlChange} />
-            <button type="submit">Create</button>
+            <button id='create-button' type="submit">Create</button>
         </form>
     )
 }

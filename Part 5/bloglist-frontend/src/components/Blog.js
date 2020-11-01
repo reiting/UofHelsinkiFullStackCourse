@@ -18,21 +18,20 @@ const Blog = ({ blog, addLike, handleDelete }) => {
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
-
       </div>
       <div style={hideWhenVisible}>
-        <button onClick={() => setDetailsVisible(true)}>View</button>
+        <button id='view-button' onClick={() => setDetailsVisible(true)}>View</button>
       </div>
       <div style={showWhenVisible} className='hidden-div'>
       <button onClick={() => setDetailsVisible(false)}>Hide</button>
         <li>
           {blog.url}
         </li>
-        <li>
+        <li id='likes-number'>
           {blog.likes}
-          <button onClick={() => addLike(blog)}>Like</button>
+          <button id='like-button' onClick={() => addLike(blog)}>Like</button>
         </li>
-        <button onClick={() => handleDelete(blog)}>Delete</button>
+        <button id ='delete-button' onClick={() => handleDelete(blog)}>Delete</button>
       </div>
     </div>
   )

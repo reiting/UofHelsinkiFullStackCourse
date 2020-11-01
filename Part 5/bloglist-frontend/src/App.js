@@ -67,7 +67,7 @@ const App = () => {
     }
 
     blogService
-      (blogObject)
+      .create(blogObject)
       .then(returnedBlog => {
         setNotification(`a new blog ${returnedBlog.title} by ${returnedBlog.author} added`)
         setTimeout(() => {
@@ -143,6 +143,7 @@ const App = () => {
       <div>
         username
           <input
+          id='username'
           type="text"
           value={username}
           name="Username"
@@ -152,18 +153,19 @@ const App = () => {
       <div>
         password
           <input
+          id='password'
           type="password"
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit">Log In</button>
+      <button id='login-button' type="submit">Log In</button>
     </form>
   )
 
   const blogForm = () => (
-    <Togglable buttonLabel='New Note'>
+    <Togglable buttonLabel='New Blog'>
       <NewBlog
         addBlog={addBlog}
         newTitle={newTitle}
@@ -171,7 +173,7 @@ const App = () => {
         newAuthor={newAuthor}
         handleAuthorChange={handleAuthorChange}
         newUrl={newUrl}
-        handleUrlChange={handleUrlChange} 
+        handleUrlChange={handleUrlChange}
       />
     </Togglable>
   )
@@ -181,18 +183,25 @@ const App = () => {
   return (
     <div>
       <h2>Blogs</h2>
-      <Notification message={errorMessage} hasError={true} />
+      {errorMessage ? (
+        <Notification message={errorMessage} hasError={true} />
+      ) : null}
+      {notification ? <Notification message={notification} /> : null}
       {user === null ?
         loginForm() :
         <div>
+          <div>
             <p>{user?.username} is logged in</p>
-            <button type="submit" onChange={handleLogout}>Log Out</button>
+          </div>
+          <div>
+            <button type="submit" onClick={handleLogout}>Log Out</button>
             {blogForm()}
+          </div>
         </div>
       }
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
-/>
+        />
       )}
     </div>
   )
