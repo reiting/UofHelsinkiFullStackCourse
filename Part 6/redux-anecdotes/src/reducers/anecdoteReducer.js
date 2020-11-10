@@ -27,18 +27,25 @@ const anecdoteReducer = (state = initialState, action) => {
     case 'VOTE':
       const id = action.id;
       const anecdoteToUpdate = state.find((anecdote) => anecdote.id === id);
+      console.log('update', anecdoteToUpdate)
       const updatedAnecdote = {
         ...anecdoteToUpdate,
         votes: anecdoteToUpdate.votes + 1,
       };
       return state.map((anecdote) => (anecdote.id === id ? updatedAnecdote : anecdote));
-      case 'NEW_ANECDOTE':
-        return state.concat(action.data);
+    case 'NEW_ANECDOTE':
+      return [...state, action.data]
     default:
-      return state;
+      return state
   }
 }
-export const voteForAnecdote = id => ({ type: 'VOTE', id });
+
+export const voteForAnecdote = id => {
+  return {
+    type: 'VOTE',
+    id
+  }
+}
 
 export const newAnecdote = content => {
   return {
