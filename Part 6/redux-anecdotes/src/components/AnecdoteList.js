@@ -9,7 +9,7 @@ const AnecdoteList = () => {
 
     const filteredAnecdotes = anecdotes.filter((a) => {
         if (filter === "") {
-            return
+            return anecdotes
         }
         return a.content.toLowerCase().includes(filter.toLowerCase())
     })
