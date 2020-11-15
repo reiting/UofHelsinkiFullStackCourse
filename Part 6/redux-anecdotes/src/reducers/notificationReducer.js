@@ -1,4 +1,4 @@
-const initialState = {message: '' }
+const initialState = { message: '' }
 
 const notificationReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -11,11 +11,18 @@ const notificationReducer = (state = initialState, action) => {
   }
 }
 
-export const setNotificationMessage = message => {
+export const setNotificationMessage = (message, delay) => {
   console.log('mesage', message)
-  return {
-    type: 'NEW_NOTIFICATION',
-    data: { message },
+  return async dispatch => {
+    dispatch({
+      type: 'NEW_NOTIFICATION',
+      data: {
+        message,
+        delay: setTimeout(() => {
+          dispatch(removeNotificationMessage(''));
+        }, delay * 1000),
+      }
+    })
   }
 }
 
