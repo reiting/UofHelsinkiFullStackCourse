@@ -1,7 +1,5 @@
 import anecdoteService from '../services/anecdotes'
 
-const getId = () => (100000 * Math.random()).toFixed(0)
-
 const anecdoteReducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action', action)
@@ -11,12 +9,6 @@ const anecdoteReducer = (state = [], action) => {
       return action.data
     case 'VOTE':
       const id = action.data.id;
-      // const anecdoteToUpdate = state.find((anecdote) => anecdote.id === id);
-      // console.log('update', anecdoteToUpdate)
-      // const updatedAnecdote = {
-      //   ...anecdoteToUpdate,
-      //   votes: anecdoteToUpdate.votes + 1,
-      // };
       return state.map((anecdote) => (anecdote.id === id ? action.data : anecdote));
     case 'NEW_ANECDOTE':
       return [...state, action.data]
