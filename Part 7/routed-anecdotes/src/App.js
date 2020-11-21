@@ -21,10 +21,34 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => 
+      <li key={anecdote.id}>
+        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+      </li>)}
     </ul>
   </div>
 )
+
+const Anecdote = ({ anecdote, vote }) => (
+  <div>
+    <h2>
+      {anecdote.content} 
+    </h2>
+    <h4>Author: {anecdote.author}</h4>
+    <p>
+      has {anecdote.votes} {anecdote.votes === 1 ? "vote" : "votes"}
+      <button onClick={() => vote(anecdote.id)}>
+        vote
+      </button>
+    </p>
+    <p>
+      for more info see{" "}
+      <a href={anecdote.info} target="_blank" rel="noopener noreferrer">
+        {anecdote.info}
+      </a>
+    </p>
+  </div>
+);
 
 const About = () => (
   <div>
@@ -127,19 +151,25 @@ const App = () => {
   }
 
   const padding = {
-        paddingRight: 5
-      }
+    paddingRight: 5
+  }
 
   return (
     <Router>
       <div>
-      <div>
+        <div>
           <Link style={padding} to='/'>home</Link>
-          <Link style={padding}to='/create'>create new</Link>
+          <Link style={padding} to='/create'>create new</Link>
         </div>
         <h1>Software anecdotes</h1>
         <About />
         <Switch>
+        <Route
+            path="/anecdotes/:id"
+            render={({ match }) => (
+              <Anecdote anecdote={anecdoteById(match.params.id)} vote={vote} />
+            )}
+          ></Route>
           <Route path='/create'>
             <CreateNew addNew={addNew} />
           </Route>
