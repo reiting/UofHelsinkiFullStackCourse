@@ -20,10 +20,29 @@ const useField = (type) => {
 const useResource = (baseUrl) => {
   const [resources, setResources] = useState([])
 
-  // ...
+  useEffect(() => {
+    const fetchResource = async () => {
+      try {
+          const response = await axios.get(baseUrl)
+          if (response) {
+            setResources(response.data)
+          }
+      } catch(error) {
+       console.log('error is: ', error)
+       setResources([])
+      }
+    }
 
-  const create = (resource) => {
-    // ...
+    fetchResource()
+  }, [baseUrl])
+
+  const create = async (resource) => {
+   try {
+     const response = await axios.post(baseUrl, resource)
+     setResources([...resources, response.data])
+   } catch (error) {
+     console.log('error is: ', error)
+   }
   }
 
   const service = {
