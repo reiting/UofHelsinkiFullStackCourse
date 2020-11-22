@@ -14,14 +14,32 @@ const useField = (type) => {
     onChange
   }
 }
-
-const useCountry = (name) => {
+const useCountry = name => {
   const [country, setCountry] = useState(null)
 
-  useEffect()
+  const url = `https://restcountries.eu/rest/v2/name/${name}?fullText=true`;
+
+  useEffect(() => {
+    const fetchCountry = async () => {
+      try {
+        if (name) {
+          const response = await axios.get(url)
+          if (response) {
+            setCountry({found: true, data: response.data[0]})
+          }
+        }
+      } catch(error) {
+       console.log('error is: ', error)
+       setCountry({found: false, data: {}})
+      }
+    }
+
+    fetchCountry()
+  }, [name])
 
   return country
 }
+
 
 const Country = ({ country }) => {
   if (!country) {
@@ -40,8 +58,8 @@ const Country = ({ country }) => {
     <div>
       <h3>{country.data.name} </h3>
       <div>capital {country.data.capital} </div>
-      <div>population {country.data.population}</div> 
-      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`}/>  
+      <div>population {country.data.population}</div>
+      <img src={country.data.flag} height='100' alt={`flag of ${country.data.name}`} />
     </div>
   )
 }
@@ -60,7 +78,7 @@ const App = () => {
     <div>
       <form onSubmit={fetch}>
         <input {...nameInput} />
-        <button>find</button>
+        <button type='submit'>find</button>
       </form>
 
       <Country country={country} />
