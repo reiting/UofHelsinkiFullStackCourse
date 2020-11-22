@@ -73,19 +73,14 @@ const Footer = () => (
   </div>
 )
 
-const CreateNew = (props) => {
-  // const [content, setContent] = useState('')
-  // const [author, setAuthor] = useState('')
-  // const [info, setInfo] = useState('')
-
-  const content = useField('text')
-  const author = useField('text')
-  const info = useField('text')
-
+const CreateNew = ({ addNew }) => {
+  const { reset: resetContent, ...content } = useField('text');
+  const { reset: resetAuthor, ...author } = useField('text');
+  const { reset: resetInfo, ...info } = useField('text');
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    props.addNew({
+    addNew({
       content: content.value,
       author: author.value,
       info: info.value,
@@ -93,23 +88,31 @@ const CreateNew = (props) => {
     })
   }
 
+  const resetFields = () => {
+    resetContent();
+    resetAuthor();
+    resetInfo();
+  };
+
+
   return (
     <div>
       <h2>create a new anecdote</h2>
       <form onSubmit={handleSubmit}>
         <div>
-        content: 
-        <input  {...content} /> 
+          content:
+        <input  {...content} />
         </div>
         <div>
-        author: 
-        <input  {...author} /> 
+          author:
+        <input  {...author} />
         </div>
         <div>
-        url for more info: 
-        <input  {...info} /> 
+          url for more info:
+        <input  {...info} />
         </div>
         <button type='submit'>create</button>
+        <button type='button' onClick={resetFields}>reset</button>
       </form>
     </div>
   )
@@ -183,7 +186,7 @@ const App = () => {
             )}
           ></Route>
           <Route path='/create'>
-          {blogCreated ? <Redirect to='/' /> : <CreateNew addNew={addNew} />}
+            {blogCreated ? <Redirect to='/' /> : <CreateNew addNew={addNew} />}
           </Route>
           <Route path='/about'>
             <About />
