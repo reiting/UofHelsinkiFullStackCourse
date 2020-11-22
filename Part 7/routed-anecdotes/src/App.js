@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import {
   BrowserRouter as Router,
-  Switch, Route, Link
+  Switch, Route, Link, Redirect
 } from 'react-router-dom'
 
 // const Menu = () => {
@@ -21,10 +21,10 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => 
-      <li key={anecdote.id}>
-        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-      </li>)}
+      {anecdotes.map(anecdote =>
+        <li key={anecdote.id}>
+          <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>)}
     </ul>
   </div>
 )
@@ -32,7 +32,7 @@ const AnecdoteList = ({ anecdotes }) => (
 const Anecdote = ({ anecdote, vote }) => (
   <div>
     <h2>
-      {anecdote.content} 
+      {anecdote.content}
     </h2>
     <h4>Author: {anecdote.author}</h4>
     <p>
@@ -104,7 +104,7 @@ const CreateNew = (props) => {
           url for more info
           <input name='info' value={info} onChange={(e) => setInfo(e.target.value)} />
         </div>
-        <button>create</button>
+        <button type='submit'>create</button>
       </form>
     </div>
   )
@@ -130,10 +130,16 @@ const App = () => {
   ])
 
   const [notification, setNotification] = useState('')
+  const [blogCreated, setBlogCreated] = useState(false)
 
   const addNew = (anecdote) => {
     anecdote.id = (Math.random() * 10000).toFixed(0)
     setAnecdotes(anecdotes.concat(anecdote))
+    setNotification(`Added ${anecdote.content}`)
+    setBlogCreated(true)
+    setTimeout(() => {
+      setNotification('')
+    }, 10000)
   }
 
   const anecdoteById = (id) =>
@@ -160,18 +166,22 @@ const App = () => {
         <div>
           <Link style={padding} to='/'>home</Link>
           <Link style={padding} to='/create'>create new</Link>
+          <Link style={padding} to='/about'>about</Link>
         </div>
         <h1>Software anecdotes</h1>
-        <About />
+        <div>{notification}</div>
         <Switch>
-        <Route
-            path="/anecdotes/:id"
+          <Route
+            path='/anecdotes/:id'
             render={({ match }) => (
               <Anecdote anecdote={anecdoteById(match.params.id)} vote={vote} />
             )}
           ></Route>
           <Route path='/create'>
-            <CreateNew addNew={addNew} />
+          {blogCreated ? <Redirect to='/' /> : <CreateNew addNew={addNew} />}
+          </Route>
+          <Route path='/about'>
+            <About />
           </Route>
           <Route path='/'>
             <AnecdoteList anecdotes={anecdotes} />
