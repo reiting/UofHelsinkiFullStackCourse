@@ -12,13 +12,13 @@ const getAll = () => {
   return request.then(response => response.data)
 }
 
-const create = async newObject => {
+const create = blog => {
   const config = {
     headers: { Authorization: token },
   }
 
-  const response = await axios.post(baseUrl, newObject, config)
-  return response.data
+  const request = axios.post(baseUrl, blog, config)
+  return request.then(response => response.data)
 }
 
 const update = (id, newObject) => {
