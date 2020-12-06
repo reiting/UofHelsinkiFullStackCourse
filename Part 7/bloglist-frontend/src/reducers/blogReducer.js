@@ -3,13 +3,13 @@ import blogService from '../services/blogs'
 const blogReducer = (state = [], action) => {
   console.log('state now: ', state)
   console.log('action', action)
+  const id = action.data
   switch (action.type) {
     case 'INIT_BLOGS':
       return action.data
     case 'NEW_BLOG':
       return [...state, action.data]
     case 'LIKE_BLOG':
-      const id = action.data
       const likedBlog = state.find((blog) => (blog.id === id))
       console.log('blog', likedBlog)
       const blogToLike = {
@@ -53,17 +53,17 @@ export const likeBlog = (id, likedBlog) => {
     await blogService.update(id, likedBlog)
     dispatch({
       type: 'LIKE_BLOG',
-      data:  id ,
+      data: id ,
     })
   }
 }
 
-export const removeBlog = (id) => {
-  return async (dispatch) => {
-    await blogService.deleteBlog(id)
+export const removeBlog = id => {
+  return async dispatch => {
+    await blogService.remove(id)
     dispatch({
       type: 'DELETE_BLOG',
-      data: { id },
+      data: id ,
     })
   }
 }

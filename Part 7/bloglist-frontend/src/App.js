@@ -7,7 +7,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs, likeBlog } from './reducers/blogReducer'
+import { createBlog, initializeBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -101,21 +101,19 @@ const App = () => {
       }
     }
 
-    // const handleDelete = async blog => {
-    //   if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
-    //     try {
-    //       const response = await blogService.remove(blog.id)
-    //       console.log(response)
-    //       setBlogs(blogs.filter(b => b.id !== blog.id))
-    //     } catch (error) {
-    //       console.log(error)
-    //       setNotificationMessage(error.message)
-    //       setTimeout(() => {
-    //         setNotificationMessage(null)
-    //       }, 3000)
-    //     }
-    //   }
-    // }
+    const handleDelete = async (blog) => {
+      if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
+        try {
+          dispatch(removeBlog(blog.id))
+        } catch (error) {
+          console.log(error)
+          setNotificationMessage(error.message)
+          setTimeout(() => {
+            setNotificationMessage(null)
+          }, 3000)
+        }
+      }
+    }
 
     const handleLogout = () => {
       window.localStorage.removeItem('loggedBlogappUser')
@@ -193,7 +191,7 @@ const App = () => {
           </div>
         }
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} addLike={addLike}
+          <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
           />
         )}
               </div>
