@@ -7,20 +7,17 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
-import { initializeBlogs } from './reducers/blogReducer'
+import { createBlog, initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  // const [blogs, setBlogs] = useState([])
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState('')
 
   const blogs = useSelector((state) => state.blogs)
-  console.log('blogssssssss', blogs)
 
   const dispatch = useDispatch()
 
@@ -60,6 +57,30 @@ const App = () => {
     }
   }
 
+  // const handleCreateBlog = (event) => {
+  //   event.preventDefault()
+  //   try {
+  //     const title = inputValue?.title
+  //     const author = inputValue?.author
+  //     const url = inputValue?.url
+  //     const likes = 0
+
+  //     const blog = {
+  //       title,
+  //       author,
+  //       url,
+  //       likes,
+  //     }
+
+  //     createBlog(blog)
+
+  //     // reset input values
+  //     setInputValue({ author: '', title: '', url: '' })
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
+
   const addBlog = async (event) => {
     event.preventDefault()
     const blogObject = {
@@ -70,8 +91,10 @@ const App = () => {
 
     try {
       const newBlog = await blogService.create(blogObject)
-      // setBlogs(blogs.concat(newBlog))
-      setNewBlog('')
+      createBlog(blogObject)
+      setNewAuthor('')
+      setNewTitle('')
+      setNewUrl('')
       dispatch(
         setNotificationMessage({ message: `a new blog ${newBlog.title} by ${newBlog.author} added` }, 5)
       )
