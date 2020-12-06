@@ -7,7 +7,7 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs } from './reducers/blogReducer'
+import { createBlog, initializeBlogs, likeBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -56,31 +56,7 @@ const App = () => {
       )
     }
   }
-
-  // const handleCreateBlog = (event) => {
-  //   event.preventDefault()
-  //   try {
-  //     const title = inputValue?.title
-  //     const author = inputValue?.author
-  //     const url = inputValue?.url
-  //     const likes = 0
-
-  //     const blog = {
-  //       title,
-  //       author,
-  //       url,
-  //       likes,
-  //     }
-
-  //     createBlog(blog)
-
-  //     // reset input values
-  //     setInputValue({ author: '', title: '', url: '' })
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
-
+  
   const addBlog = async (event) => {
     event.preventDefault()
     const blogObject = {
@@ -103,42 +79,43 @@ const App = () => {
     }
   }
 
-  // const addLike = async blog => {
-  //     const updatedBlog = {
-  //       user: blog.user.id,
-  //       likes: blog.likes + 1,
-  //       author: blog.author,
-  //       title: blog.title,
-  //       url: blog.url
-  //     }
+  const addLike = async blog => {
+      const updatedBlog = {
+        user: blog.user?.id,
+        likes: blog.likes + 1,
+        author: blog.author,
+        title: blog.title,
+        url: blog.url
+      }
+      
+      try {
+        dispatch(
+          likeBlog(blog.id, updatedBlog)
+        )
+      } catch (error) {
+        console.log(error)
+        setNotificationMessage(error.message)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 3000)
+      }
+    }
 
-  //     try {
-  //       const response = await blogService.update(blog.id, updatedBlog)
-  //       setBlogs(blogs.map(blog => (blog.id !== response.id ? blog : response)))
-  //     } catch (error) {
-  //       console.log(error)
-  //       setNotificationMessage(error.message)
-  //       setTimeout(() => {
-  //         setNotificationMessage(null)
-  //       }, 3000)
-  //     }
-  //   }
-
-  //   const handleDelete = async blog => {
-  //     if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
-  //       try {
-  //         const response = await blogService.remove(blog.id)
-  //         console.log(response)
-  //         setBlogs(blogs.filter(b => b.id !== blog.id))
-  //       } catch (error) {
-  //         console.log(error)
-  //         setNotificationMessage(error.message)
-  //         setTimeout(() => {
-  //           setNotificationMessage(null)
-  //         }, 3000)
-  //       }
-  //     }
-  //   }
+    // const handleDelete = async blog => {
+    //   if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
+    //     try {
+    //       const response = await blogService.remove(blog.id)
+    //       console.log(response)
+    //       setBlogs(blogs.filter(b => b.id !== blog.id))
+    //     } catch (error) {
+    //       console.log(error)
+    //       setNotificationMessage(error.message)
+    //       setTimeout(() => {
+    //         setNotificationMessage(null)
+    //       }, 3000)
+    //     }
+    //   }
+    // }
 
     const handleLogout = () => {
       window.localStorage.removeItem('loggedBlogappUser')
@@ -216,7 +193,7 @@ const App = () => {
           </div>
         }
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog}
+          <Blog key={blog.id} blog={blog} addLike={addLike}
           />
         )}
               </div>
