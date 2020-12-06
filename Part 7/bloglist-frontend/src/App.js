@@ -8,6 +8,7 @@ import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
 import { createBlog, initializeBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
+import { initializeUsers } from './reducers/userReducer'
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -23,6 +24,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initializeBlogs())
+    dispatch(initializeUsers())
   }, [dispatch])
 
   useEffect(() => {
