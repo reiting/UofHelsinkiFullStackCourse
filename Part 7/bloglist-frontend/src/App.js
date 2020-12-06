@@ -5,11 +5,12 @@ import loginService from './services/login'
 import NewBlog from './components/NewBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
+import { initializeBlogs } from './reducers/blogReducer'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
+  // const [blogs, setBlogs] = useState([])
   const [newTitle, setNewTitle] = useState('')
   const [newAuthor, setNewAuthor] = useState('')
   const [newUrl, setNewUrl] = useState('')
@@ -18,17 +19,14 @@ const App = () => {
   const [user, setUser] = useState(null)
   const [newBlog, setNewBlog] = useState('')
 
+  const blogs = useSelector((state) => state.blogs)
+  console.log('blogssssssss', blogs)
+
   const dispatch = useDispatch()
 
-  // useEffect(() => {
-  //   dispatch()
-  // }, [dispatch])
-
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs)
-    )
-  }, [])
+    dispatch(initializeBlogs())
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
@@ -72,7 +70,7 @@ const App = () => {
 
     try {
       const newBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat(newBlog))
+      // setBlogs(blogs.concat(newBlog))
       setNewBlog('')
       dispatch(
         setNotificationMessage({ message: `a new blog ${newBlog.title} by ${newBlog.author} added` }, 5)
@@ -82,42 +80,42 @@ const App = () => {
     }
   }
 
-  const addLike = async blog => {
-      const updatedBlog = {
-        user: blog.user.id,
-        likes: blog.likes + 1,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url
-      }
+  // const addLike = async blog => {
+  //     const updatedBlog = {
+  //       user: blog.user.id,
+  //       likes: blog.likes + 1,
+  //       author: blog.author,
+  //       title: blog.title,
+  //       url: blog.url
+  //     }
 
-      try {
-        const response = await blogService.update(blog.id, updatedBlog)
-        setBlogs(blogs.map(blog => (blog.id !== response.id ? blog : response)))
-      } catch (error) {
-        console.log(error)
-        setNotificationMessage(error.message)
-        setTimeout(() => {
-          setNotificationMessage(null)
-        }, 3000)
-      }
-    }
+  //     try {
+  //       const response = await blogService.update(blog.id, updatedBlog)
+  //       setBlogs(blogs.map(blog => (blog.id !== response.id ? blog : response)))
+  //     } catch (error) {
+  //       console.log(error)
+  //       setNotificationMessage(error.message)
+  //       setTimeout(() => {
+  //         setNotificationMessage(null)
+  //       }, 3000)
+  //     }
+  //   }
 
-    const handleDelete = async blog => {
-      if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
-        try {
-          const response = await blogService.remove(blog.id)
-          console.log(response)
-          setBlogs(blogs.filter(b => b.id !== blog.id))
-        } catch (error) {
-          console.log(error)
-          setNotificationMessage(error.message)
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 3000)
-        }
-      }
-    }
+  //   const handleDelete = async blog => {
+  //     if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
+  //       try {
+  //         const response = await blogService.remove(blog.id)
+  //         console.log(response)
+  //         setBlogs(blogs.filter(b => b.id !== blog.id))
+  //       } catch (error) {
+  //         console.log(error)
+  //         setNotificationMessage(error.message)
+  //         setTimeout(() => {
+  //           setNotificationMessage(null)
+  //         }, 3000)
+  //       }
+  //     }
+  //   }
 
     const handleLogout = () => {
       window.localStorage.removeItem('loggedBlogappUser')
@@ -195,12 +193,11 @@ const App = () => {
           </div>
         }
         {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
+          <Blog key={blog.id} blog={blog}
           />
         )}
-      </div>
+              </div>
     )
-
   }
 
   export default App

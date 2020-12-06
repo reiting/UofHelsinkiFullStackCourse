@@ -23,7 +23,7 @@ const Blog = ({ blog, addLike, handleDelete }) => {
         <button id='view-button' onClick={() => setDetailsVisible(true)}>View</button>
       </div>
       <div style={showWhenVisible} className='hidden-div'>
-      <button onClick={() => setDetailsVisible(false)}>Hide</button>
+        <button onClick={() => setDetailsVisible(false)}>Hide</button>
         <li>
           {blog.url}
         </li>
@@ -31,7 +31,7 @@ const Blog = ({ blog, addLike, handleDelete }) => {
           {blog.likes}
           <button id='like-button' onClick={() => addLike(blog)}>Like</button>
         </li>
-        <button id ='delete-button' onClick={() => handleDelete(blog)}>Delete</button>
+        <button id='delete-button' onClick={() => handleDelete(blog)}>Delete</button>
       </div>
     </div>
   )
