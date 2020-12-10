@@ -14,6 +14,7 @@ import {
   Switch, Route, Link, Redirect
 } from 'react-router-dom'
 import Users from './components/Users'
+import User from './components/User'
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -192,8 +193,11 @@ const App = () => {
           <Link style={padding} to='/users'>Users</Link>
         </div>
         <Switch>
+        <Route path='/users/:id'>
+            <User />
+          </Route>
           <Route path='/users'>
-          <Users />
+            <Users />
           </Route>
         </Switch>
       </div>
