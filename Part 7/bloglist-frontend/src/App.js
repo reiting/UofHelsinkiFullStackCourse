@@ -9,6 +9,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
 import { createBlog, initializeBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link, Redirect
+} from 'react-router-dom'
+import Users from './components/Users'
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -58,7 +63,7 @@ const App = () => {
       )
     }
   }
-  
+
   const addBlog = async (event) => {
     event.preventDefault()
     const blogObject = {
@@ -82,18 +87,31 @@ const App = () => {
   }
 
   const addLike = async blog => {
-      const updatedBlog = {
-        user: blog.user?.id,
-        likes: blog.likes + 1,
-        author: blog.author,
-        title: blog.title,
-        url: blog.url
-      }
-      
+    const updatedBlog = {
+      user: blog.user?.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    try {
+      dispatch(
+        likeBlog(blog.id, updatedBlog)
+      )
+    } catch (error) {
+      console.log(error)
+      setNotificationMessage(error.message)
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 3000)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
       try {
-        dispatch(
-          likeBlog(blog.id, updatedBlog)
-        )
+        dispatch(removeBlog(blog.id))
       } catch (error) {
         console.log(error)
         setNotificationMessage(error.message)
@@ -102,81 +120,83 @@ const App = () => {
         }, 3000)
       }
     }
+  }
 
-    const handleDelete = async (blog) => {
-      if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
-        try {
-          dispatch(removeBlog(blog.id))
-        } catch (error) {
-          console.log(error)
-          setNotificationMessage(error.message)
-          setTimeout(() => {
-            setNotificationMessage(null)
-          }, 3000)
-        }
-      }
-    }
+  const handleLogout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
+  }
 
-    const handleLogout = () => {
-      window.localStorage.removeItem('loggedBlogappUser')
-      setUser(null)
-    }
+  const handleTitleChange = (event) => {
+    setNewTitle(event.target.value)
+  }
 
-    const handleTitleChange = (event) => {
-      setNewTitle(event.target.value)
-    }
+  const handleAuthorChange = (event) => {
+    setNewAuthor(event.target.value)
+  }
 
-    const handleAuthorChange = (event) => {
-      setNewAuthor(event.target.value)
-    }
+  const handleUrlChange = (event) => {
+    setNewUrl(event.target.value)
+  }
 
-    const handleUrlChange = (event) => {
-      setNewUrl(event.target.value)
-    }
-
-    const loginForm = () => (
-      <form onSubmit={handleLogin}>
-        <div>
-          username
+  const loginForm = () => (
+    <form onSubmit={handleLogin}>
+      <div>
+        username
           <input
-            id='username'
-            type="text"
-            value={username}
-            name="Username"
-            onChange={({ target }) => setUsername(target.value)}
-          />
-        </div>
-        <div>
-          password
-          <input
-            id='password'
-            type="password"
-            value={password}
-            name="Password"
-            onChange={({ target }) => setPassword(target.value)}
-          />
-        </div>
-        <button id='login-button' type="submit">Log In</button>
-      </form>
-    )
-
-    const blogForm = () => (
-      <Togglable buttonLabel='New Blog'>
-        <NewBlog
-          addBlog={addBlog}
-          newTitle={newTitle}
-          handleTitleChange={handleTitleChange}
-          newAuthor={newAuthor}
-          handleAuthorChange={handleAuthorChange}
-          newUrl={newUrl}
-          handleUrlChange={handleUrlChange}
+          id='username'
+          type="text"
+          value={username}
+          name="Username"
+          onChange={({ target }) => setUsername(target.value)}
         />
-      </Togglable>
-    )
+      </div>
+      <div>
+        password
+          <input
+          id='password'
+          type="password"
+          value={password}
+          name="Password"
+          onChange={({ target }) => setPassword(target.value)}
+        />
+      </div>
+      <button id='login-button' type="submit">Log In</button>
+    </form>
+  )
 
-    blogs.sort((a, b) => b.likes - a.likes)
+  const blogForm = () => (
+    <Togglable buttonLabel='New Blog'>
+      <NewBlog
+        addBlog={addBlog}
+        newTitle={newTitle}
+        handleTitleChange={handleTitleChange}
+        newAuthor={newAuthor}
+        handleAuthorChange={handleAuthorChange}
+        newUrl={newUrl}
+        handleUrlChange={handleUrlChange}
+      />
+    </Togglable>
+  )
 
-    return (
+  blogs.sort((a, b) => b.likes - a.likes)
+
+  const padding = {
+    paddingRight: 5
+  }
+  return (
+    <Router>
+      <div>
+        <div>
+          <Link style={padding} to='/'>home</Link>
+          <Link style={padding} to='/users'>Users</Link>
+        </div>
+        <Switch>
+          <Route path='/users'>
+          <Users />
+          </Route>
+        </Switch>
+      </div>
       <div>
         <h2>Blogs</h2>
         <Notification />
@@ -196,8 +216,10 @@ const App = () => {
           <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
           />
         )}
-              </div>
-    )
-  }
+      </div>
+    </Router>
 
-  export default App
+  )
+}
+
+export default App
