@@ -7,11 +7,11 @@ import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import { useDispatch, useSelector } from 'react-redux'
 import { setNotificationMessage } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
+import { createBlog, initializeBlogs } from './reducers/blogReducer'
 import { initializeUsers } from './reducers/userReducer'
 import {
   BrowserRouter as Router,
-  Switch, Route, Link, Redirect
+  Switch, Route, Link
 } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
@@ -44,7 +44,6 @@ const App = () => {
 
   const handleLogin = async event => {
     event.preventDefault()
-    console.log('logging in with', username, password)
 
     try {
       const user = await loginService.login({
@@ -84,42 +83,6 @@ const App = () => {
       )
     } catch (error) {
       console.log(error)
-    }
-  }
-
-  const addLike = async blog => {
-    const updatedBlog = {
-      user: blog.user?.id,
-      likes: blog.likes + 1,
-      author: blog.author,
-      title: blog.title,
-      url: blog.url
-    }
-
-    try {
-      dispatch(
-        likeBlog(blog.id, updatedBlog)
-      )
-    } catch (error) {
-      console.log(error)
-      setNotificationMessage(error.message)
-      setTimeout(() => {
-        setNotificationMessage(null)
-      }, 3000)
-    }
-  }
-
-  const handleDelete = async (blog) => {
-    if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
-      try {
-        dispatch(removeBlog(blog.id))
-      } catch (error) {
-        console.log(error)
-        setNotificationMessage(error.message)
-        setTimeout(() => {
-          setNotificationMessage(null)
-        }, 3000)
-      }
     }
   }
 
@@ -193,8 +156,11 @@ const App = () => {
           <Link style={padding} to='/users'>Users</Link>
         </div>
         <Switch>
-        <Route path='/users/:id'>
+          <Route path='/users/:id'>
             <User />
+          </Route>
+          <Route path='/blogs/:id'>
+            <Blog />
           </Route>
           <Route path='/users'>
             <Users />
@@ -216,10 +182,14 @@ const App = () => {
             </div>
           </div>
         }
-        {blogs.map(blog =>
-          <Blog key={blog.id} blog={blog} addLike={addLike} handleDelete={handleDelete}
-          />
-        )}
+        {blogs.map((blog => (
+          <Link key={blog.id} to={`/blogs/${blog.id}`}>
+          <ul>
+            <li>{blog.title}</li>
+          </ul>
+          </Link>
+        )
+        ))}
       </div>
     </Router>
 
@@ -227,3 +197,6 @@ const App = () => {
 }
 
 export default App
+
+
+

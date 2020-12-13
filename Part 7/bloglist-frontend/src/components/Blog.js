@@ -1,7 +1,17 @@
-import React, { useState } from 'react'
+import React from 'react'
+import { useSelector, useDispatch } from "react-redux"
+import { useRouteMatch, useHistory } from 'react-router-dom'
+import { likeBlog, removeBlog } from '../reducers/blogReducer'
+import { setNotificationMessage } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, addLike, handleDelete }) => {
-  const [detailsVisible, setDetailsVisible] = useState(false)
+const Blog = () => {
+  const blogs = useSelector((state) => state.blogs)
+
+  const match = useRouteMatch('/blogs/:id')
+  const blog = match ? blogs?.find((blog) => blog.id === match.params.id) : null
+
+  const dispatch = useDispatch()
+  const history = useHistory()
 
   const blogStyle = {
     paddingTop: 10,
@@ -11,19 +21,49 @@ const Blog = ({ blog, addLike, handleDelete }) => {
     marginBottom: 5,
   }
 
-  const hideWhenVisible = { display: detailsVisible ? 'none' : '' }
-  const showWhenVisible = { display: detailsVisible ? '' : 'none' }
+  const addLike = async blog => {
+    const updatedBlog = {
+      user: blog.user?.id,
+      likes: blog.likes + 1,
+      author: blog.author,
+      title: blog.title,
+      url: blog.url
+    }
+
+    try {
+      dispatch(
+        likeBlog(blog.id, updatedBlog)
+      )
+    } catch (error) {
+      console.log(error)
+      setNotificationMessage(error.message)
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 3000)
+    }
+  }
+
+  const handleDelete = async (blog) => {
+    if (window.confirm(`Are you sure you want to delete ${blog.title}??`)) {
+      try {
+        dispatch(removeBlog(blog.id))
+        history.push('/blogs')
+      } catch (error) {
+        console.log(error)
+        setNotificationMessage(error.message)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        }, 3000)
+      }
+    }
+  }
 
   return (
     <div style={blogStyle}>
       <div>
         {blog.title} {blog.author}
       </div>
-      <div style={hideWhenVisible}>
-        <button id='view-button' onClick={() => setDetailsVisible(true)}>View</button>
-      </div>
-      <div style={showWhenVisible} className='hidden-div'>
-        <button onClick={() => setDetailsVisible(false)}>Hide</button>
+      <div>
         <li>
           {blog.url}
         </li>

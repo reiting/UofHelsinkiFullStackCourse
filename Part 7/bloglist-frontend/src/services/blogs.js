@@ -23,7 +23,6 @@ const create = async blog => {
 
 const update = (id, newObject) => {
   const response = axios.put(`${ baseUrl }/${id}`, newObject)
-  console.log('response', response.data)
   return response.data
 }
 
@@ -32,6 +31,7 @@ const remove = async id => {
     headers: { Authorization: token }
   }
   const response = await axios.delete(`${baseUrl}/${id}`, config)
+  console.log('dlete response', response)
   return response.data
 }
 
