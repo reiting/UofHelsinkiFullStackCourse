@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { useRouteMatch, useHistory } from 'react-router-dom'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { setNotificationMessage } from '../reducers/notificationReducer'
+import Comments from './Comments'
 
 const Blog = () => {
   const blogs = useSelector((state) => state.blogs)
@@ -72,6 +73,9 @@ const Blog = () => {
           <button id='like-button' onClick={() => addLike(blog)}>Like</button>
         </li>
         <button id='delete-button' onClick={() => handleDelete(blog)}>Delete</button>
+      </div>
+      <div>
+      <Comments id={blog.id} />
       </div>
     </div>
   )
