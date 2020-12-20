@@ -1,5 +1,4 @@
 const router = require('express').Router()
-const { request } = require('express')
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
@@ -7,7 +6,6 @@ const User = require('../models/user')
 router.get('/', async (request, response) => {
   const blogs = await Blog
     .find({}).populate('user', { username: 1, name: 1 })
-
   response.json(blogs)
 })
 
@@ -75,22 +73,34 @@ router.post('/', async (request, response) => {
 })
 
 router.post('/:id/comments', async (request, response) => {
-  const { body } = request;
+  const id = request.params.id;
+  const comment = request.body.comment;
+    const blog = await Blog.findById(id);
+    if(blog) {
+      if(Array.isArray(blog.comments)) {
+        blog.comments.push(comment);
+      } else {
+        blog.comments = [comment];
+      }
 
-  const decodedToken = jwt.verify(request.token, process.env.SECRET)
+      const newBlog = await blog.save();
 
-  if (!request.token || !decodedToken || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' })
-  }
+      const fullBlog = await Blog.populate(newBlog, {
+        path: 'user'
+      });
 
-  const blog = await Blog.findById(request.params.id)
-  if (blog) {
-    blog.comments = blog.comments.concat(body)
-    await blog.save()
-    response.status(200).json(savedBlog.toJSON())
-  } else {
-    ressponse.status(404).end();
-  }
+      response.status(200).json(
+        fullBlog
+      );
+
+    } else {
+      response.status(400).json({
+        error: `No blog with the following id: ${id}`
+      });
+    }
+    const udatedBlog = await Blog.findByIdAndUpdate(id, blog, {
+      new: true
+    }).populate("user");
 })
 
 
