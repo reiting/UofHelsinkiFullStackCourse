@@ -4,7 +4,17 @@ import { useRouteMatch, useHistory } from 'react-router-dom'
 import { likeBlog, removeBlog } from '../reducers/blogReducer'
 import { setNotificationMessage } from '../reducers/notificationReducer'
 import Comments from './Comments'
+import styled from 'styled-components'
 
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`
 const Blog = () => {
   const blogs = useSelector((state) => state.blogs)
 
@@ -70,9 +80,9 @@ const Blog = () => {
         </li>
         <li id='likes-number'>
           {blog.likes}
-          <button id='like-button' onClick={() => addLike(blog)}>Like</button>
+          <Button id='like-button' onClick={() => addLike(blog)}>Like</Button>
         </li>
-        <button id='delete-button' onClick={() => handleDelete(blog)}>Delete</button>
+        <Button id='delete-button' onClick={() => handleDelete(blog)}>Delete</Button>
       </div>
       <div>
       <Comments id={blog.id} />

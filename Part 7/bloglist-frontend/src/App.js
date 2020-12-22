@@ -15,6 +15,20 @@ import {
 } from 'react-router-dom'
 import Users from './components/Users'
 import User from './components/User'
+import styled from 'styled-components'
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`
+
+const Input = styled.input`
+  margin: 0.25em;
+`
 
 const App = () => {
   const [newTitle, setNewTitle] = useState('')
@@ -107,7 +121,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+          <Input
           id='username'
           type="text"
           value={username}
@@ -117,7 +131,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+          <Input
           id='password'
           type="password"
           value={password}
@@ -125,7 +139,7 @@ const App = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button id='login-button' type="submit">Log In</button>
+      <Button id='login-button' type="submit">Log In</Button>
     </form>
   )
 
@@ -177,7 +191,7 @@ const App = () => {
               <p>{user?.username} is logged in</p>
             </div>
             <div>
-              <button type="submit" onClick={handleLogout}>Log Out</button>
+              <Button type="submit" onClick={handleLogout}>Log Out</Button>
               {blogForm()}
             </div>
           </div>

@@ -2,6 +2,20 @@ import React, {useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useRouteMatch } from 'react-router-dom'
 import { createComment } from '../reducers/blogReducer'
+import styled from 'styled-components'
+
+const Button = styled.button`
+  background: Bisque;
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid Chocolate;
+  border-radius: 3px;
+`
+
+const Input = styled.input`
+  margin: 0.25em;
+`
 
 const Comments = () => {
   const [newComment, setNewComment] = useState()
@@ -33,10 +47,10 @@ const Comments = () => {
 
   return (
     <form onSubmit={addComment}>
-      Comment: <input
+      Comment: <Input
         value={newComment}
         onChange={handleCommentChange} />
-    <button type='submit'>Add Comment</button>
+    <Button type='submit'>Add Comment</Button>
     </form>
   )
 }
