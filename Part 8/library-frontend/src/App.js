@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react'
 import Authors from './components/Authors'
-import BirthYear from './components/BirthYear'
 import Books from './components/Books'
 import NewBook from './components/NewBook'
 
@@ -27,8 +26,6 @@ const App = () => {
       <NewBook
         show={page === 'add'}
       />
-
-      <BirthYear/>
 
     </div>
   )

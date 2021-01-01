@@ -1,16 +1,24 @@
 import React, { useEffect, useState } from 'react'
 import { ALL_AUTHORS } from '../queries'
 import { useQuery } from '@apollo/client'
+import BirthYear from './BirthYear'
 
 const Authors = (props) => {
   const [authors, setAuthors] = useState([])
-  const result = useQuery(ALL_AUTHORS) 
+  const result = useQuery(ALL_AUTHORS)
 
   useEffect(() => {
     if (result.data) {
       setAuthors(result.data.allAuthors)
     }
   }, [result])
+
+  const options = result?.data?.allAuthors.map((option) => {
+    return {
+      value: option.name.toLowerCase(),
+      label: option.name
+    }
+  })
 
   if (!props.show) {
     return null
@@ -39,7 +47,7 @@ const Authors = (props) => {
           )}
         </tbody>
       </table>
-
+      <BirthYear options={options} />
     </div>
   )
 }

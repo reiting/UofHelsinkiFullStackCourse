@@ -1,8 +1,9 @@
 import { useMutation } from '@apollo/client'
 import React, { useState } from 'react'
 import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries'
+import Select from 'react-select'
 
-const BirthYear = () => {
+const BirthYear = ({ options }) => {
   const [name, setName] = useState('')
   let [born, setborn] = useState('')
 
@@ -21,12 +22,13 @@ const BirthYear = () => {
 
   return (
     <div>
+      <h2>Set Birth Year</h2>
       <form onSubmit={submit}>
         <div>
-          name
-          <input
-            value={name}
-            onChange={({ target }) => setName(target.value)}
+          <Select
+            options={options}
+            onChange={({ label }) => setName(label)}
+            value={{ label: name, value: name }}
           />
         </div>
         <div>
