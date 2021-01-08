@@ -15,7 +15,9 @@ export const ALL_BOOKS = gql`
   query getAllBooks($author: String) {
     allBooks(author: $author) {
       title
-      author
+      author {
+        name
+      }
       published
       id
     }
@@ -36,7 +38,9 @@ export const CREATE_BOOK = gql`
       genres: $genres
     ) {
       title
-      author
+      author {
+        name
+      }
       published
       genres
       id
