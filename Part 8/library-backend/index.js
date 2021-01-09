@@ -58,8 +58,8 @@ const resolvers = {
       const books = await Book.find({});
       console.log('books', books)
       return books.reduce((count, book) => {
-        return book.author.toString() === root.id ? count + 1 : count;
-      }, 0);
+        return book.author.toString() === root.id ? count + 1 : count
+      }, 0)
     },
   },
   Query: {
@@ -78,7 +78,7 @@ const resolvers = {
         return books;
       }
       if (args.author) {
-        const author = await Author.findOne({ name: args.author });
+        const author = await Author.findOne({ name: args.author })
         const books = await Book.find({ author: { $in: author.id } }).populate(
           "author"
         );
@@ -98,42 +98,41 @@ const resolvers = {
 
 
   Mutation: {
-        addBook: async (root, args) => {
-          let author = await Author.findOne({ name: args.author });
+    addBook: async (root, args) => {
+      let author = await Author.findOne({ name: args.author })
 
-          if (!author) {
-            author = new Author({ name: args.author });
-            await author.save()
-          }
-
-          let book = new Book({
-            title: args.title,
-            published: args.published,
-            author: author._id,
-            genres: args.genres,
-          })
-
-          console.log('book', book)
-          await book.save()
-          return book.populate("author").execPopulate();
-        },
-        editAuthor: (root, args) => {
-          const author = authors.find((a) => a.name === args.name);
-
-          if (!author) return null;
-
-          const authorToUpdate = { ...author, born: args.born };
-          authors = authors.map((a) => (a.name === args.name ? authorToUpdate : a));
-          return authorToUpdate;
-        }
+      if (!author) {
+        author = new Author({ name: args.author })
+        await author.save()
       }
+
+      let book = new Book({
+        title: args.title,
+        published: args.published,
+        author: author._id,
+        genres: args.genres,
+      })
+
+      await book.save()
+      return book.populate("author").execPopulate()
+    },
+    editAuthor: async (root, args) => {
+      let author = await Author.findOne({ name: args.name })
+
+      if (!author) return null
+
+      author.born = args.born
+      await author.save()
+      return author
     }
+  }
+}
 
 const server = new ApolloServer({
-      typeDefs,
-      resolvers,
-    })
+  typeDefs,
+  resolvers,
+})
 
 server.listen().then(({ url }) => {
-      console.log(`Server ready at ${url}`)
-    })
+  console.log(`Server ready at ${url}`)
+})
