@@ -5,7 +5,7 @@ import Select from 'react-select'
 
 const BirthYear = ({ options }) => {
   const [name, setName] = useState('')
-  let [born, setborn] = useState('')
+  let [born, setBorn] = useState('')
 
   const [editAuthor] = useMutation(EDIT_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }]
@@ -17,7 +17,7 @@ const BirthYear = ({ options }) => {
     editAuthor({ variables: { name, born } })
 
     setName('')
-    setborn('')
+    setBorn('')
   }
 
   return (
@@ -35,7 +35,7 @@ const BirthYear = ({ options }) => {
           born
           <input
             value={born}
-            onChange={({ target }) => setborn(target.value)}
+            onChange={({ target }) => setBorn(target.value)}
           />
         </div>
         <button type='submit'>Update Year</button>
