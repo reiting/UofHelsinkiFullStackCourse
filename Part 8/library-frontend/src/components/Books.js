@@ -4,22 +4,48 @@ import { ALL_BOOKS } from '../queries'
 
 const Books = (props) => {
   const [books, setBooks] = useState([])
+  const [filteredBooks, setFilteredBooks] = useState([])
+  const [genres, setGenres] = useState([])
+  const [selectedGenre, setSelectedGenre] = useState('')
   const result = useQuery(ALL_BOOKS) 
 
   useEffect(() => {
     if (result.data) {
-      setBooks(result.data.allBooks)
+      const allBooks = result.data.allBooks
+      setBooks(allBooks)
+      let genres = ['All genres']
+      allBooks.forEach((element) => {
+        element.genres.forEach((g) => {
+          if (genres.indexOf(g) === -1) {
+            genres.push(g)
+          }
+        })
+      })
+      setGenres(genres)
+      setSelectedGenre('All genres')
     }
   }, [result])
 
-  if (!props.show) {
+  useEffect(() => {
+    if (selectedGenre === 'All genres') {
+      setFilteredBooks(books)
+    } else {
+      setFilteredBooks(
+        books.filter((b) => b.genres.indexOf(selectedGenre) !== -1)
+      )
+    }
+  }, [books, selectedGenre])
+
+  if(!props.show) {
     return null
   }
 
   return (
     <div>
       <h2>books</h2>
-
+      <p>
+        in genre <b>{selectedGenre}</b>
+      </p>
       <table>
         <tbody>
           <tr>
@@ -31,7 +57,7 @@ const Books = (props) => {
               published
             </th>
           </tr>
-          {books.map(a =>
+          {filteredBooks.map(a =>
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -40,6 +66,14 @@ const Books = (props) => {
           )}
         </tbody>
       </table>
+      <div>
+        {genres.length > 0 &&
+          genres.map((g) => (
+            <button onClick={() => setSelectedGenre(g)} key={g}>
+              {g}
+            </button>
+          ))}
+      </div>
     </div>
   )
 }
