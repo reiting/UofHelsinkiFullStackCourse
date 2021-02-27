@@ -26,6 +26,9 @@ const Login = ({ show, setToken, setError }) => {
     login({ variables: { username, password } })
   }
 
+  // if (!show) {
+  //   return null;
+  // }
 
   return (
     <form onSubmit={submit}>
