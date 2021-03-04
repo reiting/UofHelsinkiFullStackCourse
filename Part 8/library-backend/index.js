@@ -118,7 +118,6 @@ const resolvers = {
     }
   },
 
-
   Mutation: {
     addBook: async (root, args, context) => {
       let author = await Author.findOne({ name: args.author })
@@ -172,7 +171,6 @@ const resolvers = {
     
     createUser: (root, args) => {
       const user = new User({ ...args })
-
       return user.save()
         .catch(error => {
           throw new UserInputError(error.message, {
@@ -182,6 +180,8 @@ const resolvers = {
     },
     login: async (root, args) => {
       const user = await User.findOne({ username: args.username })
+
+      console.log('USERRRRRRR', user)
 
       if (!user || args.password !== 'secred') {
         throw new UserInputError('wrong credentials')
@@ -206,7 +206,7 @@ const server = new ApolloServer({
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
-      const currentUser = await User.findById(decodedToken.id)
+      const currentUser = await User.findOne({username: decodedToken.username})
       return { currentUser }
     }
   }
