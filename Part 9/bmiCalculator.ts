@@ -7,7 +7,7 @@ export const calculateBmi = (height: number, weight: number):string => {
   if (bmi >= 30) return 'Obese';
 
   return 'Could not calculate BMI';
-}
+};
 
 interface ParsedArguments {
   height: number;
@@ -36,4 +36,4 @@ try {
   console.log('USAGE: npm run calculateBmi height(cm) weight(kg)');
 }
 
-console.log(calculateBmi(180, 74))
+console.log(calculateBmi(180, 74));
