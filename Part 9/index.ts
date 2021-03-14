@@ -1,8 +1,23 @@
+import { calculateBmi } from './bmiCalculator';
 import express from 'express';
 const app = express();
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
+});
+
+app.get('/bmi', (req, res) => {
+  const { weight, height } = req.query;
+  const validParameters: boolean =
+    !isNaN(Number(height)) && !isNaN(Number(weight));
+  const bmi = calculateBmi(Number(height), Number(weight));
+
+  if (!validParameters || !weight || !height) {
+    res.send({
+      error: 'malformatted parameters',
+    });
+  }
+  res.send({ weight, height, bmi });
 });
 
 const PORT = 3003;
