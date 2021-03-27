@@ -20,6 +20,29 @@ app.get('/bmi', (req, res) => {
   res.send({ weight, height, bmi });
 });
 
+app.post('/exercises', (req, res) => {
+  const { body } = req;
+  const { dailyExercises } = body;
+  let { target } = body;
+
+  if (!target || !dailyExercises) {
+    return res.status(400).json({ error: 'parameters missing' });
+  }
+
+  if (!Array.isArray(dailyExercises)) {
+    return res.status(400).json({ error: 'malformatted parameters' });
+  }
+
+  const hasNaNInDailyHours = dailyExercises.some((hours) => isNaN(hours));
+  target = Number(target);
+
+  if (isNaN(target) || hasNaNInDailyHours) {
+    return res.status(400).json({ error: 'malformatted parameters' });
+  }
+
+  return res.json(calculateExercises(dailyExercises, target));
+});
+
 const PORT = 3003;
 
 app.listen(PORT, () => {
