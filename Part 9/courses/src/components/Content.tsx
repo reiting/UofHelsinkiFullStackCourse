@@ -1,20 +1,17 @@
 import React from 'react';
-
-interface CoursePart {
-  name: string;
-  exerciseCount: number;
-}
+import { CoursePart } from '../App';
+import Part from './Part';
 
 const Content = ({ courseParts }: { courseParts: CoursePart[] }) => {
   return (
     <div>
-      {courseParts.map((coursePart) => (
-        <p key={coursePart.name}>
-          {coursePart.name} {coursePart.exerciseCount}
-        </p>
+      {courseParts.map((part) => (
+        <Part key={part.type} part={part} />
       ))}
     </div>
   );
 };
-
 export default Content;
+
+
+
