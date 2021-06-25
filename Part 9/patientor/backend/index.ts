@@ -26,13 +26,22 @@ enum Gender {
 
 type BirthDate = `${number}-${number}-${number}`;
 
+export interface Entry {}
+
 interface Patient {
   id: string;
   name: string;
   dateOfBirth: BirthDate;
   ssn: string;
-  gender: Gender;  occupation: string;
+  gender: Gender;  
+  occupation: string;
+  entries: Entry[];
 }
+
+export type PublicPatient = Omit<Patient, "ssn" | "entries">;
+
+export type NewPatient = Omit<Patient, "id">;
+
 
 type Fields = {
   name: unknown;
@@ -48,6 +57,7 @@ const parseValidPatient = (object: Fields): Omit<Patient, "id"> => ({
   gender: parseGender(object.gender),
   ssn: parseSSN(object.ssn),
   occupation: parseOccupation(object.occupation),
+  entries: []
 });
 
 const parseGender = (gender: unknown): Gender => {
@@ -111,8 +121,8 @@ const parseDateOfBirth = (dateOfBirth: unknown): BirthDate => {
 };
 
 const getNonSensitiveEntriesFromPatient = (
-  patients: Patient[]
-): Omit<Patient, 'ssn'>[] =>
+  patients: PublicPatient[]
+): Omit<PublicPatient, 'ssn'>[] =>
   patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
@@ -133,6 +143,27 @@ app.get('/api/diagnoses', (_req, res) => {
 
 app.get('/api/patients', (_req, res) => {
   res.send(getNonSensitiveEntriesFromPatient(tempPatients));
+});
+
+const findPatientById = (id: string): Patient | undefined => {
+  let patient = tempPatients.find((p) => p.id === id);
+
+  if (!patient?.entries)
+    patient = {
+      ...patient,
+      entries: [],
+    } as Patient;
+
+  return patient;
+};
+
+app.get('/api/patients/:id', (req, res) => {
+  const patient = findPatientById(req.params.id);
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 const createPatient = (patient: Omit<Patient, "id">): Patient => {
