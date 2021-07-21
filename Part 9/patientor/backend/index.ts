@@ -1,5 +1,5 @@
 import diagnosesJSON from './data/diagnoses.json';
-import patientsJSON from './data/patients.json';
+import patientsData from './data/patients';
 import { v1 as uuid } from 'uuid';
 import express from 'express';
 import cors from 'cors';
@@ -11,7 +11,7 @@ app.use(express.json());
 
 const PORT = 3001;
 
-const tempPatients: Patient[] = [...(patientsJSON as Patient[])];
+const patients: Array<Patient> = patientsData;
 
 interface Diagnose {
   code: string;
@@ -19,21 +19,20 @@ interface Diagnose {
   latin?: string;
 }
 
-enum Gender {
-  female = "female",
-  male = "male",
+export enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other",
 }
 
 type BirthDate = `${number}-${number}-${number}`;
 
-export interface Entry {}
-
-interface Patient {
+export interface Patient {
   id: string;
   name: string;
-  dateOfBirth: BirthDate;
   ssn: string;
-  gender: Gender;  
+  dateOfBirth: string;
+  gender: string;
   occupation: string;
   entries: Entry[];
 }
@@ -42,7 +41,6 @@ export type PublicPatient = Omit<Patient, "ssn" | "entries">;
 
 export type NewPatient = Omit<Patient, "id">;
 
-
 type Fields = {
   name: unknown;
   dateOfBirth: unknown;
@@ -50,6 +48,45 @@ type Fields = {
   ssn: unknown;
   occupation: unknown;
 };
+
+interface BaseEntry {
+  id: string;
+  description: string;
+  date: string;
+  specialist: string;
+  diagnosisCodes?: Array<Diagnose['code']>;
+}
+
+export enum HealthCheckRating {
+  "Healthy" = 0,
+  "LowRisk" = 1,
+  "HighRisk" = 2,
+  "CriticalRisk" = 3
+}
+
+interface HealthCheckEntry extends BaseEntry {
+  type: "HealthCheck";
+  healthCheckRating: HealthCheckRating;
+}
+
+export type Discharge = { date: string; criteria: string };
+export type SickLeave = { startDate: string; endDate: string };
+
+export interface OccupationalHealthcareEntry extends BaseEntry {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: { startDate: string; endDate: string };
+}
+
+export interface HospitalEntry extends BaseEntry {
+  type: "Hospital";
+  discharge?: Discharge;
+}
+
+export type Entry =
+  | HospitalEntry
+  | OccupationalHealthcareEntry
+  | HealthCheckEntry;
 
 const parseValidPatient = (object: Fields): Omit<Patient, "id"> => ({
   name: parseName(object.name),
@@ -61,15 +98,15 @@ const parseValidPatient = (object: Fields): Omit<Patient, "id"> => ({
 });
 
 const parseGender = (gender: unknown): Gender => {
-  if (gender === "male") {
-    return Gender.male;
+  if (gender === "Male") {
+    return Gender.Male;
   }
 
-  if (gender === "female") {
-    return Gender.female;
+  if (gender === "Female") {
+    return Gender.Female;
   }
 
-  throw new Error("Gender can only be female or male, it was " + gender);
+  throw new Error("Gender can only be Female or Male, it was " + gender);
 };
 
 const isString = (text: unknown): text is string => {
@@ -120,16 +157,26 @@ const parseDateOfBirth = (dateOfBirth: unknown): BirthDate => {
   return `${dateInNumbers[0]}-${dateInNumbers[1]}-${dateInNumbers[2]}` as BirthDate;
 };
 
-const getNonSensitiveEntriesFromPatient = (
-  patients: PublicPatient[]
-): Omit<PublicPatient, 'ssn'>[] =>
-  patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+// const getNonSensitiveEntriesFromPatient = (
+//   patients: PublicPatient[]
+// ): Omit<PublicPatient, 'ssn'>[] =>
+//   patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
+//     id,
+//     name,
+//     dateOfBirth,
+//     gender,
+//     occupation,
+    
+//   }));
+const getPatients = (): PublicPatient[] => {
+  return patients.map(({ id, name, dateOfBirth, gender, occupation }) => ({
     id,
     name,
     dateOfBirth,
     gender,
     occupation,
   }));
+};
 
 app.get('/api/ping', (_req, res) => {
   console.log('someone pinged here');
@@ -142,11 +189,11 @@ app.get('/api/diagnoses', (_req, res) => {
 });
 
 app.get('/api/patients', (_req, res) => {
-  res.send(getNonSensitiveEntriesFromPatient(tempPatients));
+  res.send(getPatients());
 });
 
 const findPatientById = (id: string): Patient | undefined => {
-  let patient = tempPatients.find((p) => p.id === id);
+  let patient = patients.find((p) => p.id === id);
 
   if (!patient?.entries)
     patient = {
@@ -169,7 +216,7 @@ app.get('/api/patients/:id', (req, res) => {
 const createPatient = (patient: Omit<Patient, "id">): Patient => {
   const id = uuid();
   const newPatient = { id, ...patient };
-  tempPatients.push(newPatient);
+  patients.push(newPatient);
 
   return newPatient;
 };
