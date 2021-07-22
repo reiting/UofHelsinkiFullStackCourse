@@ -1,4 +1,4 @@
-import { Gender, Patient } from '..';
+import { Patient, Gender } from './../types';
 
 const patientsData: Patient[] = [
   {
